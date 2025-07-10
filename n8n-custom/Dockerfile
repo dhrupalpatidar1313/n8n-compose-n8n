@@ -5,6 +5,7 @@ USER root
 RUN apk add --no-cache \
     python3 \
     py3-pip \
+    py3-virtualenv \
     curl \
     ffmpeg \
     yt-dlp \
@@ -26,17 +27,19 @@ RUN apk add --no-cache \
     chromium \
     chromium-chromedriver
 
-# Upgrade pip and install some Python packages globally
-RUN pip3 install --upgrade pip && \
-    pip3 install \
-    requests \
-    pandas \
-    beautifulsoup4 \
-    lxml \
-    selenium \
-    opencv-python-headless
+# Create and activate a virtualenv for safe pip installs
+RUN python3 -m venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install \
+        requests \
+        pandas \
+        beautifulsoup4 \
+        lxml \
+        selenium \
+        opencv-python-headless
 
-# Clean up to reduce image size
+# Clean up
 RUN rm -rf /var/cache/apk/*
 
 USER node
